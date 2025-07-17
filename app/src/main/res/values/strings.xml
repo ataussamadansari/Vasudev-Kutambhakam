@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Vasudev Kutumbhakam</string>
+    <string name="home">Home</string>
+    <string name="play_and_earn"><![CDATA[Play & earn]]></string>
+    <string name="loans">Loans</string>
+    <string name="assist">Assist</string>
+    <string name="profile">Profile</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="notification">Notification</string>
+    <string name="add_you_bank_account">Add you bank account</string>
+    <string name="add_bank_account">Add Bank Account</string>
+    <string name="repay_on_time">Repay on time</string>
+    <string name="transact_regularly">Transact Regularly</string>
+    <string name="refer_friend">Refer Friend</string>
+    <string name="our_happy_customers">Our Happy Customers!</string>
+    <string name="get_started_now">Get Started Now</string>
+    <string name="back">Back</string>
+    <string name="edit">Edit</string>
+    <string name="option_btn_icon">Option Btn Icon</string>
+</resources>

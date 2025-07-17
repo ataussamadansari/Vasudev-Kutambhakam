@@ -1,0 +1,56 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="25dp"
+    android:height="24dp"
+    android:viewportWidth="25"
+    android:viewportHeight="24">
+
+    <!-- Outer icon with gradient fill -->
+    <path
+        android:pathData="M5.5,21V5C5.5,4.47 5.711,3.961 6.086,3.586C6.461,3.211 6.97,3 7.5,3H17.5C18.03,3 18.539,3.211 18.914,3.586C19.289,3.961 19.5,4.47 19.5,5V21L16.5,19L14.5,21L12.5,19L10.5,21L8.5,19L5.5,21Z"
+        android:strokeWidth="1"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round">
+
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="0"
+                android:startY="0"
+                android:endX="25"
+                android:endY="24">
+                <item android:offset="0" android:color="#FF636AE8" />
+                <item android:offset="1" android:color="#FF22CCB2" />
+            </gradient>
+        </aapt:attr>
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:type="linear"
+                android:startX="0"
+                android:startY="0"
+                android:endX="25"
+                android:endY="24">
+                <item android:offset="0" android:color="#FF636AE8" />
+                <item android:offset="1" android:color="#FF22CCB2" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- White center lines -->
+    <path
+        android:pathData="M9.5,7H15.5"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.2"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M9.5,11H15.5"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.2"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M13.5,15H15.5"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.2"
+        android:strokeLineCap="round" />
+
+</vector>
