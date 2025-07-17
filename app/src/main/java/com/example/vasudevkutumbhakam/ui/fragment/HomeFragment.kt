@@ -1,5 +1,6 @@
 package com.example.vasudevkutumbhakam.ui.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -13,6 +14,7 @@ import com.example.vasudevkutumbhakam.adapter.ReviewAdapter
 import com.example.vasudevkutumbhakam.databinding.FragmentHomeBinding
 import com.example.vasudevkutumbhakam.model.Process
 import com.example.vasudevkutumbhakam.model.Review
+import com.example.vasudevkutumbhakam.ui.activity.CheckEligibilityActivity
 
 
 class HomeFragment : Fragment() {
@@ -52,6 +54,10 @@ class HomeFragment : Fragment() {
         binding.reviewRv.apply {
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             adapter = ReviewAdapter(reviews)
+        }
+
+        binding.getLoanBtn.setOnClickListener {
+            startActivity(Intent(requireContext(), CheckEligibilityActivity::class.java))
         }
     }
 

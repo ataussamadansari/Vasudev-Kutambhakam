@@ -40,11 +40,14 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.backBtn.visibility = View.GONE
+
         // option menu recyclerview setup
         binding.optionBtnRv.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = OptionAdapter(options)
         }
+
     }
 
     override fun onDestroy() {

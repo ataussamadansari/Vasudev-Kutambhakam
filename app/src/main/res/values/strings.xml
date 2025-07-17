@@ -18,4 +18,5 @@
     <string name="back">Back</string>
     <string name="edit">Edit</string>
     <string name="option_btn_icon">Option Btn Icon</string>
+    <string name="check_eligibility">Check Eligibility</string>
 </resources>
