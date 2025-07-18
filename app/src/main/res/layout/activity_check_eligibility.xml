@@ -97,6 +97,7 @@
                 android:layout_height="@dimen/_16sdp" />
 
             <LinearLayout
+                android:id="@+id/user_details_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_8sdp"
@@ -124,6 +125,7 @@
                     android:textSize="@dimen/_14ssp" />
 
                 <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/u_d_arrow"
                     android:layout_width="@dimen/_20sdp"
                     android:layout_height="@dimen/_20sdp"
                     android:rotation="-90"
@@ -137,6 +139,7 @@
                 android:background="@drawable/doted_line" />
 
             <LinearLayout
+                android:id="@+id/income_details_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_8sdp"
@@ -165,6 +168,7 @@
                     android:textSize="@dimen/_14ssp" />
 
                 <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/i_d_arrow"
                     android:layout_width="@dimen/_20sdp"
                     android:layout_height="@dimen/_20sdp"
                     android:rotation="-90"
@@ -178,6 +182,7 @@
                 android:background="@drawable/doted_line" />
 
             <LinearLayout
+                android:id="@+id/id_proof_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_8sdp"
@@ -206,6 +211,7 @@
                     android:textSize="@dimen/_14ssp" />
 
                 <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/i_p_arrow"
                     android:layout_width="@dimen/_20sdp"
                     android:layout_height="@dimen/_20sdp"
                     android:rotation="-90"
@@ -219,6 +225,7 @@
                 android:background="@drawable/doted_line" />
 
             <LinearLayout
+                android:id="@+id/kyc_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_8sdp"
@@ -247,6 +254,7 @@
                     android:textSize="@dimen/_14ssp" />
 
                 <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/kyc_arrow"
                     android:layout_width="@dimen/_20sdp"
                     android:layout_height="@dimen/_20sdp"
                     android:rotation="-90"
@@ -260,6 +268,7 @@
                 android:background="@drawable/doted_line" />
 
             <LinearLayout
+                android:id="@+id/bank_details_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_8sdp"
@@ -287,6 +296,7 @@
                     android:textSize="@dimen/_14ssp" />
 
                 <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/b_d_arrow"
                     android:layout_width="@dimen/_20sdp"
                     android:layout_height="@dimen/_20sdp"
                     android:rotation="-90"
@@ -301,7 +311,7 @@
 
         </LinearLayout>
     </ScrollView>
-    
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/appCompatButton"
         android:layout_width="match_parent"

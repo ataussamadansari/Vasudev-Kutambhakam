@@ -220,6 +220,7 @@
                 android:paddingBottom="@dimen/_16sdp">
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/processPresTV"
                     android:layout_width="@dimen/_48sdp"
                     android:layout_height="@dimen/_48sdp"
                     android:background="@drawable/line_circle"

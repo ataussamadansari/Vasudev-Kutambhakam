@@ -11,28 +11,33 @@
         android:orientation="horizontal">
 
         <View
+            android:id="@+id/check_eligibility_circle"
             android:layout_width="@dimen/_16sdp"
             android:layout_height="@dimen/_16sdp"
             android:background="@drawable/indicator_circle" />
 
         <View
+            android:id="@+id/kyc_line"
             android:layout_width="0dp"
             android:layout_height="@dimen/_2sdp"
             android:layout_weight="1"
             android:background="@drawable/inactive_line" />
 
         <View
+            android:id="@+id/kyc_circle"
             android:layout_width="@dimen/_16sdp"
             android:layout_height="@dimen/_16sdp"
             android:background="@drawable/inactive_indicator_circle" />
 
         <View
+            android:id="@+id/profile_info_line"
             android:layout_width="0dp"
             android:layout_height="@dimen/_2sdp"
             android:layout_weight="1"
             android:background="@drawable/inactive_line" />
 
         <View
+            android:id="@+id/profile_info_circle"
             android:layout_width="@dimen/_16sdp"
             android:layout_height="@dimen/_16sdp"
             android:background="@drawable/inactive_indicator_circle" />
@@ -45,6 +50,7 @@
         android:orientation="horizontal">
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/process_check_eligibility_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -52,6 +58,7 @@
             android:text="Check\nEligibility" />
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/process_kyc_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -60,6 +67,7 @@
             android:text="KYC" />
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/profile_info_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="end"

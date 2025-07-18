@@ -5,9 +5,12 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.vasudevkutumbhakam.R
 import com.example.vasudevkutumbhakam.databinding.ActivityCheckEligibilityBinding
+import com.example.vasudevkutumbhakam.utils.EligibilityUtil
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -34,6 +37,7 @@ class CheckEligibilityActivity : AppCompatActivity() {
             checkWhichStepToResume()
         }
 
+        fetchEligibilityStatus()
     }
 
     private fun checkWhichStepToResume() {
@@ -108,5 +112,57 @@ class CheckEligibilityActivity : AppCompatActivity() {
                 Toast.makeText(this, "Initialization failed: ${it.message}", Toast.LENGTH_SHORT).show()
             }
     }
+
+    private fun fetchEligibilityStatus()  {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+        EligibilityUtil.fetchEligibilityStatus(
+            userId = userId,
+            firestore = FirebaseFirestore.getInstance(),
+            onResult = { steps ->
+
+                if (steps.step1) {
+                    binding.uDArrow.setImageResource(R.drawable.checkmark)
+                    binding.uDArrow.rotation = 0f
+                    binding.userDetailsBtn.setOnClickListener {
+                        startActivity(Intent(this, UserDetailsActivity::class.java))
+                    }
+                }
+                if (steps.step2) {
+                    binding.iDArrow.setImageResource(R.drawable.checkmark)
+                    binding.iDArrow.rotation = 0f
+                    binding.incomeDetailsBtn.setOnClickListener {
+                        startActivity(Intent(this, IncomeActivity::class.java))
+                    }
+                }
+                if (steps.step3) {
+                    binding.iPArrow.setImageResource(R.drawable.checkmark)
+                    binding.iPArrow.rotation = 0f
+                    binding.idProofBtn.setOnClickListener {
+                        startActivity(Intent(this, IdProofActivity::class.java))
+                    }
+                }
+                if (steps.step4) {
+                    binding.kycArrow.setImageResource(R.drawable.checkmark)
+                    binding.kycArrow.rotation = 0f
+                    binding.kycBtn.setOnClickListener {
+                        startActivity(Intent(this, KycActivity::class.java))
+                    }
+                }
+                if (steps.step5) {
+                    binding.bDArrow.setImageResource(R.drawable.checkmark)
+                    binding.bDArrow.rotation = 0f
+                    binding.bankDetailsBtn.setOnClickListener {
+                        startActivity(Intent(this, BankDetailsActivity::class.java))
+                    }
+                }
+
+            },
+            onError = { errorMessage ->
+                Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
+            }
+        )
+    }
+
 
 }
