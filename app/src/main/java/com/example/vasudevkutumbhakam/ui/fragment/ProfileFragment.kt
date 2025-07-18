@@ -1,21 +1,25 @@
 package com.example.vasudevkutumbhakam.ui.fragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.vasudevkutumbhakam.R
 import com.example.vasudevkutumbhakam.adapter.OptionAdapter
-import com.example.vasudevkutumbhakam.adapter.ReviewAdapter
 import com.example.vasudevkutumbhakam.databinding.FragmentProfileBinding
 import com.example.vasudevkutumbhakam.model.OptionItem
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class ProfileFragment : Fragment() {
 
-    private var _binding : FragmentProfileBinding? = null
+    private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
+
+    private val auth = FirebaseAuth.getInstance()
+    private val firestore = FirebaseFirestore.getInstance()
 
     val options = listOf(
         OptionItem(R.drawable.user, "Manage Account"),
@@ -48,6 +52,31 @@ class ProfileFragment : Fragment() {
             adapter = OptionAdapter(options)
         }
 
+        loadUserData()
+    }
+
+    private fun loadUserData() {
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            val userId = currentUser.uid
+
+            firestore.collection("vasudev_user").document(userId)
+                .get()
+                .addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        val name = document.getString("name") ?: "N/A"
+                        val email = document.getString("email") ?: "N/A"
+                        val phone = document.getString("phone") ?: "N/A"
+
+                        binding.tvName.text = name
+                        binding.tvEmail.text = email
+                        binding.tvPhone.text = phone
+                    }
+                }
+                .addOnFailureListener {
+                    // Handle failure
+                }
+        }
     }
 
     override fun onDestroy() {

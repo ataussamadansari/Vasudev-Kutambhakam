@@ -95,7 +95,9 @@
                 android:layout_margin="@dimen/_4sdp" />
 
             <!--Name, Mobile, Email, eyc-->
+            <!-- Name -->
             <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Rohan Gaikwad"
@@ -103,19 +105,24 @@
                 android:textColor="@color/textColorPrimary"
                 android:textSize="@dimen/_16sdp" />
 
+            <!-- Phone -->
             <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvPhone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="+91 8934238912"
                 android:textSize="@dimen/_11ssp"
                 android:textColor="@color/textColorSecondary" />
 
+            <!-- Email -->
             <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="rohangaikwad@gmail.com"
                 android:textSize="@dimen/_11ssp"
                 android:textColor="@color/textColorSecondary" />
+
             <Space
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

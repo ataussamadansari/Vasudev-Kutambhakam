@@ -301,8 +301,7 @@
 
         </LinearLayout>
     </ScrollView>
-
-
+    
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/appCompatButton"
         android:layout_width="match_parent"

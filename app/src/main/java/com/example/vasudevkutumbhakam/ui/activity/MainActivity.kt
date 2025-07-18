@@ -1,4 +1,4 @@
-package com.example.vasudevkutumbhakam
+package com.example.vasudevkutumbhakam.ui.activity
 
 import android.graphics.Typeface
 import android.os.Bundle
@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.vasudevkutumbhakam.R
 import com.example.vasudevkutumbhakam.databinding.ActivityMainBinding
 import com.example.vasudevkutumbhakam.databinding.CustomBottomNavBinding
 import com.example.vasudevkutumbhakam.model.NavItem

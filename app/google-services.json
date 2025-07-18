@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "95446349110",
+    "firebase_url": "https://ecartshop-be051-default-rtdb.firebaseio.com",
+    "project_id": "ecartshop-be051",
+    "storage_bucket": "ecartshop-be051.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:95446349110:android:db6539d06d218cec7daf97",
+        "android_client_info": {
+          "package_name": "com.example.eshopcart"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-ry1OPyyi0iyEqpL4fpKYkqyDVvEIw9I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:95446349110:android:cf55789555d3595c7daf97",
+        "android_client_info": {
+          "package_name": "com.example.vasudevkutumbhakam"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-ry1OPyyi0iyEqpL4fpKYkqyDVvEIw9I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -19,4 +19,9 @@
     <string name="edit">Edit</string>
     <string name="option_btn_icon">Option Btn Icon</string>
     <string name="check_eligibility">Check Eligibility</string>
+    <string name="user_details">User Details</string>
+    <string name="income_accept_msg"><![CDATA[I declare that my monthly household income is more than Rs. 15000, and my borrowing under the present facility does not qualify to be treated as a microfinance loan]]></string>
+    <string name="id_proof_acccept_msg">I hereby declare that the ID proof submitted by me is valid, belongs to me, and I authorize Vasudev Kutumbhakam to use this document for identity verification and KYC purposes, as per applicable regulations.</string>
+    <string name="income_details">Income Details</string>
+    <string name="id_proof">ID Proof</string>
 </resources>
