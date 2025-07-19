@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.vasudevkutumbhakam.R
@@ -17,8 +18,13 @@ import com.example.vasudevkutumbhakam.adapter.ReviewAdapter
 import com.example.vasudevkutumbhakam.databinding.FragmentHomeBinding
 import com.example.vasudevkutumbhakam.model.Process
 import com.example.vasudevkutumbhakam.model.Review
+import com.example.vasudevkutumbhakam.ui.activity.BankDetailsActivity
 import com.example.vasudevkutumbhakam.ui.activity.CheckEligibilityActivity
-import com.example.vasudevkutumbhakam.utils.EligibilityUtil
+import com.example.vasudevkutumbhakam.ui.activity.IdProofActivity
+import com.example.vasudevkutumbhakam.ui.activity.IncomeActivity
+import com.example.vasudevkutumbhakam.ui.activity.KycActivity
+import com.example.vasudevkutumbhakam.ui.activity.UserDetailsActivity
+import com.example.vasudevkutumbhakam.viewModel.EligibilityViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -27,9 +33,7 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!  // Safe access
 
-
-    private lateinit var auth: FirebaseAuth
-    private lateinit var firestore: FirebaseFirestore
+    private lateinit var viewModel: EligibilityViewModel
 
     private lateinit var processKycTV: AppCompatTextView
     private lateinit var processCheckEligibilityTV: AppCompatTextView
@@ -59,14 +63,17 @@ class HomeFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        auth = FirebaseAuth.getInstance()
-        firestore = FirebaseFirestore.getInstance()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel = ViewModelProvider(this)[EligibilityViewModel::class.java]
+
+        steps()
+
+        viewModel.fetchSteps()
 
         // Set RecyclerView to use a 2-column grid layout
         binding.processRv.layoutManager = GridLayoutManager(requireContext(), 2)
@@ -87,7 +94,6 @@ class HomeFragment : Fragment() {
             startActivity(Intent(requireContext(), CheckEligibilityActivity::class.java))
         }
 
-
         binding.reviewRv.apply {
             layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -98,38 +104,34 @@ class HomeFragment : Fragment() {
             startActivity(Intent(requireContext(), CheckEligibilityActivity::class.java))
         }
 
-        fetchEligibilityStatus()
     }
 
-
-    private fun fetchEligibilityStatus() {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-
-        EligibilityUtil.fetchEligibilityStatus(
-            userId = userId,
-            firestore = FirebaseFirestore.getInstance(),
-            onResult = { steps ->
-                if (steps.step3) {
-                    lineKyc.setBackgroundResource(R.drawable.active_line)
-                    binding.processPresTV.text = "50%"
-                }
-                if (steps.step4) {
-                    kycCircle.setBackgroundResource(R.drawable.indicator_circle)
-                    processKycTV.setTextColor(resources.getColor(R.color.textColor2))
-                    binding.processPresTV.text = "60%"
-                }
-                if (steps.step5) {
-                    lineProfileInfo.setBackgroundResource(R.drawable.active_line)
-                    profileInfoCircle.setBackgroundResource(R.drawable.indicator_circle)
-                    processProfileInfoTV.setTextColor(resources.getColor(R.color.textColor2))
-                }
-            },
-            onError = { errorMessage ->
-                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+    private fun steps() {
+        viewModel.steps.observe(viewLifecycleOwner) { steps ->
+            // Show checkmarks and setup buttons
+            if (steps.step1) {
+                binding.processPresTV.text = "20%"
             }
-        )
+            if (steps.step2) {
+                binding.processPresTV.text = "40%"
+            }
+            if (steps.step3) {
+                lineKyc.setBackgroundResource(R.drawable.active_line)
+                binding.processPresTV.text = "60%"
+            }
+            if (steps.step4) {
+                kycCircle.setBackgroundResource(R.drawable.indicator_circle)
+                processKycTV.setTextColor(resources.getColor(R.color.textColor2))
+                binding.processPresTV.text = "80%"
+            }
+            if (steps.step5) {
+                lineProfileInfo.setBackgroundResource(R.drawable.active_line)
+                profileInfoCircle.setBackgroundResource(R.drawable.indicator_circle)
+                processProfileInfoTV.setTextColor(resources.getColor(R.color.textColor2))
+                binding.processPresTV.text = "100%"
+            }
+        }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

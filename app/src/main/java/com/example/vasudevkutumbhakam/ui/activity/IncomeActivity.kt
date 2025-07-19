@@ -7,15 +7,18 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
 import com.example.vasudevkutumbhakam.R
 import com.example.vasudevkutumbhakam.databinding.ActivityIncomeBinding
+import com.example.vasudevkutumbhakam.viewModel.IncomeDetailsViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class IncomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityIncomeBinding
-    private val auth = FirebaseAuth.getInstance()
-    private val firestore = FirebaseFirestore.getInstance()
+
+    private lateinit var viewModel: IncomeDetailsViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +34,29 @@ class IncomeActivity : AppCompatActivity() {
         binding.backBtn.setOnClickListener {
             finish()
         }
+
+        viewModel = ViewModelProvider(this)[IncomeDetailsViewModel::class.java]
+
+        observeViewModel()
+
+        viewModel.getIncomeDetails()
+
+        viewModel.incomeDetails.observe(this) { details ->
+            details?.let {
+                binding.editTextIncome.setText(it.income)
+
+                when (it.occupation) {
+                    "Farmer" -> binding.switchFarmer.isChecked = true
+                    "Salaried" -> binding.switchSalaried.isChecked = true
+                    "Business" -> binding.switchBusiness.isChecked = true
+                }
+
+                binding.checkBoxAccept.isChecked = it.isAccepted
+                binding.btnNext.isEnabled = it.isAccepted
+                binding.btnNext.alpha = if (it.isAccepted) 1f else 0.5f
+            }
+        }
+
 
         binding.switchFarmer.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
@@ -81,9 +107,6 @@ class IncomeActivity : AppCompatActivity() {
     }
 
     private fun saveIncomeDetails() {
-        val userId = auth.currentUser?.uid ?: return
-
-        // Check selected occupation
         val occupation = when {
             binding.switchFarmer.isChecked -> "Farmer"
             binding.switchSalaried.isChecked -> "Salaried"
@@ -92,42 +115,36 @@ class IncomeActivity : AppCompatActivity() {
         }
 
         val income = binding.editTextIncome.text.toString()
+        val isAccepted = binding.checkBoxAccept.isChecked
 
-        // Validation (optional)
         if (occupation.isEmpty() || income.isEmpty()) {
             Toast.makeText(this, "Please select occupation and enter income", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val incomeDetails = mapOf(
-            "occupation" to occupation,
-            "monthly_income" to income
-        )
-
-        // Save to user details collection
-        firestore.collection("vasudev_user_details")
-            .document(userId)
-            .update(incomeDetails)
-            .addOnSuccessListener {
-                markStep2Completed(userId)
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Failed to save income details: ${it.message}", Toast.LENGTH_SHORT).show()
-            }
+        viewModel.submitIncomeDetails(occupation, income, isAccepted)
     }
 
-    private fun markStep2Completed(userId: String) {
-        firestore.collection("eligibility")
-            .document(userId)
-            .update("step2_incomeDetails", true)
-            .addOnSuccessListener {
+
+    private fun observeViewModel() {
+        viewModel.isLoading.observe(this) { loading ->
+            binding.progressBar.visibility = if (loading) android.view.View.VISIBLE else android.view.View.GONE
+        }
+
+        viewModel.inSuccess.observe(this) { success ->
+            if (success) {
                 Toast.makeText(this, "Step 2 saved successfully", Toast.LENGTH_SHORT).show()
                 startActivity(Intent(this, IdProofActivity::class.java))
                 finish()
             }
-            .addOnFailureListener {
-                Toast.makeText(this, "Failed to update step 2 status", Toast.LENGTH_SHORT).show()
+        }
+
+        viewModel.resultMessage.observe(this) { message ->
+            message?.let {
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
             }
+        }
     }
+
 
 }

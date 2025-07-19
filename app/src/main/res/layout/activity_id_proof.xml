@@ -79,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/edit_text_outline"
                 android:hint="Aadhar/Pan"
-                android:inputType="number" />
+                android:inputType="textPhonetic" />
 
             <Space
                 android:layout_width="wrap_content"
@@ -121,6 +121,7 @@
                         android:layout_height="wrap_content">
 
                         <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/aadhar_front_iv"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:scaleType="fitXY"
@@ -160,6 +161,7 @@
                         android:layout_height="wrap_content">
 
                         <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/aadhar_back_iv"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:scaleType="fitXY"
@@ -224,6 +226,7 @@
                         android:layout_height="wrap_content">
 
                         <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/pan_front_iv"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:scaleType="fitXY"
@@ -253,7 +256,6 @@
         </LinearLayout>
 
     </ScrollView>
-
 
     <!-- Terms & Checkbox -->
     <LinearLayout
@@ -289,5 +291,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

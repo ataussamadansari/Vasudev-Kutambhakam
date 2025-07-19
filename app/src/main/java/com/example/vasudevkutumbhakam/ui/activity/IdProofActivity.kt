@@ -11,26 +11,34 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.example.vasudevkutumbhakam.R
 import com.example.vasudevkutumbhakam.databinding.ActivityIdProofBinding
+import com.example.vasudevkutumbhakam.model.IdProof
+import com.example.vasudevkutumbhakam.viewModel.IdProofViewModel
+import com.example.vasudevkutumbhakam.viewModel.UserDetailsViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 
 class IdProofActivity : AppCompatActivity() {
     private lateinit var binding: ActivityIdProofBinding
-    private val auth = FirebaseAuth.getInstance()
-    private val firestore = FirebaseFirestore.getInstance()
-    private val storage = FirebaseStorage.getInstance()
+
+    private lateinit var viewModel: IdProofViewModel
 
     private var selectedIdType: String = ""
+    private var selectedFrontUri: Uri? = null
+    private var selectedBackUri: Uri? = null
+    private var selectedPanUri: Uri? = null
+
+    private var frontUrl: String? = null
+    private var backUrl: String? = null
+    private var panUrl: String? = null
 
     private val PICK_FRONT_IMAGE = 1001
     private val PICK_BACK_IMAGE = 1002
     private val PICK_PAN_IMAGE = 1003
-    private var selectedFrontUri: Uri? = null
-    private var selectedBackUri: Uri? = null
-    private var selectedPanUri: Uri? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,11 +51,15 @@ class IdProofActivity : AppCompatActivity() {
             v.setPadding(16, systemBars.top, 16, systemBars.bottom)
             insets
         }
+        //init
+        viewModel = ViewModelProvider(this)[IdProofViewModel::class.java]
 
+        viewModel.getIdProof()
 
         setupSpinner()
         setupUploadButtons()
         setupNextButton()
+        observeViewModel()
     }
 
     private fun setupSpinner() {
@@ -111,7 +123,6 @@ class IdProofActivity : AppCompatActivity() {
     }
 
     private fun saveIdProofDetails() {
-        val userId = auth.currentUser?.uid ?: return
         val idNumber = binding.editTextIdProofNumber.text.toString().trim()
 
         if (selectedIdType == "Select ID Type" || idNumber.isEmpty()) {
@@ -119,63 +130,87 @@ class IdProofActivity : AppCompatActivity() {
             return
         }
 
-        val data = mapOf(
-            "id_type" to selectedIdType,
-            "id_number" to idNumber
+        val idProof = IdProof(
+            idType = selectedIdType,
+            idNumber = idNumber,
+            frontImage = frontUrl,
+            backImage = backUrl,
+            panImage = panUrl,
+            idAccepted = true
         )
 
-        firestore.collection("vasudev_user_details")
-            .document(userId)
-            .update(data)
-            .addOnSuccessListener {
-                markStep3Completed(userId)
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Failed to save ID details: ${it.message}", Toast.LENGTH_SHORT).show()
-            }
+        viewModel.submitIdProof(idProof)
     }
 
-    private fun uploadImageToFirebase(uri: Uri, type: String) {
-        val userId = auth.currentUser?.uid ?: return
-        val ref = storage.reference.child("id_proofs/$userId/${type}.jpg")
-
-        ref.putFile(uri)
-            .addOnSuccessListener {
-                ref.downloadUrl.addOnSuccessListener { downloadUrl ->
-                    saveImageUrlToFirestore(type, downloadUrl.toString())
-                }
+    private fun observeViewModel() {
+        viewModel.imageUploadStatus.observe(this) { pair ->
+            when (pair.first) {
+                "aadhar_front" -> frontUrl = pair.second
+                "aadhar_back" -> backUrl = pair.second
+                "pan_front" -> panUrl = pair.second
             }
-            .addOnFailureListener {
-                Toast.makeText(this, "Image upload failed: ${it.message}", Toast.LENGTH_SHORT).show()
-            }
-    }
+            Toast.makeText(this, "${pair.first} uploaded successfully", Toast.LENGTH_SHORT).show()
+        }
 
-    private fun saveImageUrlToFirestore(field: String, url: String) {
-        val userId = auth.currentUser?.uid ?: return
+        viewModel.uploadError.observe(this) {
+            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+        }
 
-        firestore.collection("vasudev_user_details")
-            .document(userId)
-            .update(field, url)
-            .addOnSuccessListener {
-                Toast.makeText(this, "$field uploaded", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Firestore update failed: ${it.message}", Toast.LENGTH_SHORT).show()
-            }
-    }
-
-    private fun markStep3Completed(userId: String) {
-        firestore.collection("eligibility")
-            .document(userId)
-            .update("step3_idProof", true)
-            .addOnSuccessListener {
+        viewModel.inSuccess.observe(this) {
+            if (it) {
                 Toast.makeText(this, "Step 3 completed", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, KycActivity::class.java)) // 👈 aapki next activity
                 finish()
             }
-            .addOnFailureListener {
-                Toast.makeText(this, "Failed to update eligibility", Toast.LENGTH_SHORT).show()
+        }
+
+        viewModel.isLoading.observe(this) { isLoading ->
+            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        }
+
+        viewModel.resultMessage.observe(this) {
+            it?.let { Toast.makeText(this, it, Toast.LENGTH_SHORT).show() }
+        }
+
+        // 👇 Handle prefilled existing ID proof
+        viewModel.idProof.observe(this) { proof ->
+            proof?.let {
+                selectedIdType = it.idType
+                val index = (binding.spinnerIdType.adapter as ArrayAdapter<String>).getPosition(it.idType)
+                if (index >= 0) binding.spinnerIdType.setSelection(index)
+
+                binding.editTextIdProofNumber.setText(it.idNumber)
+
+                frontUrl = it.frontImage
+                backUrl = it.backImage
+                panUrl = it.panImage
+
+                // Load images (optional)
+                if (!frontUrl.isNullOrEmpty()) {
+                    Glide.with(this).load(frontUrl).into(binding.aadharFrontIv)
+                }
+
+                if (!backUrl.isNullOrEmpty()) {
+                    Glide.with(this).load(backUrl).into(binding.aadharBackIv)
+                }
+
+                if (!panUrl.isNullOrEmpty()) {
+                    Glide.with(this).load(panUrl).into(binding.panFrontIv)
+                }
+
+                if (it.idAccepted) {
+                    binding.checkBoxAccept.isChecked = true
+                    binding.btnNext.isEnabled = true
+                    binding.btnNext.alpha = 1f
+                }
             }
+        }
     }
+
+    private fun uploadImageToViewModel(uri: Uri, type: String) {
+        viewModel.uploadImage(type, uri)
+    }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -186,24 +221,23 @@ class IdProofActivity : AppCompatActivity() {
             when (requestCode) {
                 PICK_FRONT_IMAGE -> imageUri?.let {
                     selectedFrontUri = it
-                    binding.aadharFrontUploadCamBtn.setImageURI(it)
-                    uploadImageToFirebase(it, "aadhar_front")
+                    binding.aadharFrontIv.setImageURI(it)
+                    viewModel.uploadImage("aadhar_front", it)
                 }
 
                 PICK_BACK_IMAGE -> imageUri?.let {
                     selectedBackUri = it
-                    binding.aadharBackUploadCamBtn.setImageURI(it)
-                    uploadImageToFirebase(it, "aadhar_back")
+                    binding.aadharBackIv.setImageURI(it)
+                    viewModel.uploadImage("aadhar_back", it)
                 }
 
                 PICK_PAN_IMAGE -> imageUri?.let {
                     selectedPanUri = it
-                    binding.panUploadCamBtn.setImageURI(it)
-                    uploadImageToFirebase(it, "pan_front")
+                    binding.panFrontIv.setImageURI(it)
+                    viewModel.uploadImage("pan_front", it)
                 }
             }
         }
     }
-
 
 }

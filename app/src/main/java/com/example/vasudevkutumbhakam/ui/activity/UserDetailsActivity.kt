@@ -10,16 +10,20 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
 import com.example.vasudevkutumbhakam.R
 import com.example.vasudevkutumbhakam.databinding.ActivityUserDetailsBinding
+import com.example.vasudevkutumbhakam.model.UserDetails
+import com.example.vasudevkutumbhakam.viewModel.UserDetailsViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.Calendar
 
 class UserDetailsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityUserDetailsBinding
-    private val auth = FirebaseAuth.getInstance()
-    private val firestore = FirebaseFirestore.getInstance()
+
+    private lateinit var viewModel: UserDetailsViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -30,6 +34,9 @@ class UserDetailsActivity : AppCompatActivity() {
             v.setPadding(16, systemBars.top, 16, systemBars.bottom)
             insets
         }
+
+        //init
+        viewModel = ViewModelProvider(this)[UserDetailsViewModel::class.java]
 
         binding.backBtn.setOnClickListener {
             finish()
@@ -58,69 +65,110 @@ class UserDetailsActivity : AppCompatActivity() {
             datePicker.show()
         }
 
-
-        loadUserName()
-
-        binding.btnNext.setOnClickListener {
-            saveUserDetails()
+        viewModel.userName.observe(this) {
+            if (it != null) binding.editTextName.setText(it)
         }
-    }
 
-    private fun loadUserName() {
-        val currentUser = auth.currentUser ?: return
-        val userId = currentUser.uid
-
-        firestore.collection("vasudev_user").document(userId)
-            .get()
-            .addOnSuccessListener { document ->
-                if (document.exists()) {
-                    val name = document.getString("name") ?: ""
-                    binding.editTextName.setText(name)
-                }
+        viewModel.userDetails.observe(this) { details ->
+            details?.let {
+                binding.editTextName.setText(it.fullName)
+                binding.editTextFatherName.setText(it.fatherName)
+                binding.editTextDob.setText(it.dob)
+                binding.editTextGender.setText(it.gender)
+                binding.editTextAddress.setText(it.address)
+                binding.editTextPincode.setText(it.pinCode)
+                binding.editTextState.setText(it.state)
+                binding.editTextDistict.setText(it.district)
             }
-            .addOnFailureListener {
-                Toast.makeText(this, "Failed to fetch name", Toast.LENGTH_SHORT).show()
-            }
-    }
+        }
 
-
-
-    private fun saveUserDetails() {
-        val userId = auth.currentUser?.uid ?: return
-
-        val userDetails = mapOf(
-            "name" to binding.editTextName.text.toString(),
-            "fatherName" to binding.editTextFatherName.text.toString(),
-            "dob" to binding.editTextDob.text.toString(),
-            "gender" to binding.editTextGender.text.toString(),
-            "address" to binding.editTextAddress.text.toString(),
-            "pincode" to binding.editTextPincode.text.toString(),
-            "state" to binding.editTextState.text.toString(),
-            "district" to binding.editTextDistict.text.toString()
-        )
-
-        firestore.collection("vasudev_user_details")
-            .document(userId)
-            .set(userDetails)
-            .addOnSuccessListener {
-                markStep1Completed(userId)
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Failed to save user details: ${it.message}", Toast.LENGTH_SHORT).show()
-            }
-    }
-
-    private fun markStep1Completed(userId: String) {
-        firestore.collection("eligibility")
-            .document(userId)
-            .update("step1_userDetails", true)
-            .addOnSuccessListener {
+        viewModel.uploadStatus.observe(this) {
+            if (it) {
                 Toast.makeText(this, "Step 1 saved successfully", Toast.LENGTH_SHORT).show()
                 startActivity(Intent(this, IncomeActivity::class.java))
                 finish()
             }
-            .addOnFailureListener {
-                Toast.makeText(this, "Failed to update step 1 status", Toast.LENGTH_SHORT).show()
+        }
+
+        viewModel.errorMessage.observe(this) {
+            it?.let {
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
             }
+        }
+
+        viewModel.loadUserName()
+        viewModel.loadUserDetails()
+
+        binding.btnNext.setOnClickListener {
+            saveUserDetails()
+        }
+
     }
+
+    private fun saveUserDetails() {
+        val fullName = binding.editTextName.text.toString().trim()
+        val fatherName = binding.editTextFatherName.text.toString().trim()
+        val dob = binding.editTextDob.text.toString().trim()
+        val gender = binding.editTextGender.text.toString().trim()
+        val address = binding.editTextAddress.text.toString().trim()
+        val pinCode = binding.editTextPincode.text.toString().trim()
+        val state = binding.editTextState.text.toString().trim()
+        val district = binding.editTextDistict.text.toString().trim()
+
+        // Validation
+        if (fullName.isEmpty()) {
+            binding.editTextName.error = "Required"
+            return
+        }
+
+        if (fatherName.isEmpty()) {
+            binding.editTextFatherName.error = "Required"
+            return
+        }
+
+        if (dob.isEmpty()) {
+            binding.editTextDob.error = "Required"
+            return
+        }
+
+        if (gender.isEmpty()) {
+            binding.editTextGender.error = "Required"
+            return
+        }
+
+        if (address.isEmpty()) {
+            binding.editTextAddress.error = "Required"
+            return
+        }
+
+        if (pinCode.isEmpty()) {
+            binding.editTextPincode.error = "Required"
+            return
+        }
+
+        if (state.isEmpty()) {
+            binding.editTextState.error = "Required"
+            return
+        }
+
+        if (district.isEmpty()) {
+            binding.editTextDistict.error = "Required"
+            return
+        }
+
+        // All fields valid — save details
+        val details = UserDetails(
+            fullName = fullName,
+            fatherName = fatherName,
+            dob = dob,
+            gender = gender,
+            address = address,
+            pinCode = pinCode,
+            state = state,
+            district = district
+        )
+
+        viewModel.saveUserDetails(details)
+    }
+
 }
