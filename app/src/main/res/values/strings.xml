@@ -29,4 +29,5 @@
     <string name="instruction3">Keep your <b>ORIGINAL PAN CARD</b> ready for display to the agent</string>
     <string name="instruction2"><b>ANSWER THE QUESTIONS</b> asked by our agent</string>
     <string name="instruction4">You should be <b>SUITABLY DRESSED</b> and stand in a place with proper lighting</string>
+    <string name="bank_details">Bank Details</string>
 </resources>

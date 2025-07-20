@@ -5,15 +5,13 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.vasudevkutumbhakam.R
 import com.example.vasudevkutumbhakam.databinding.ActivityCheckEligibilityBinding
+import com.example.vasudevkutumbhakam.viewModel.ApplicationStatusViewModel
 import com.example.vasudevkutumbhakam.viewModel.EligibilityViewModel
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 
 class CheckEligibilityActivity : AppCompatActivity() {
 
@@ -92,12 +90,20 @@ class CheckEligibilityActivity : AppCompatActivity() {
             val currentSteps = viewModel.steps.value
             if (currentSteps != null) {
                 when {
-                    !currentSteps.step1 -> startActivity(Intent(this, UserDetailsActivity::class.java))
+                    !currentSteps.step1 -> startActivity(
+                        Intent(
+                            this,
+                            UserDetailsActivity::class.java
+                        )
+                    )
+
                     !currentSteps.step2 -> startActivity(Intent(this, IncomeActivity::class.java))
                     !currentSteps.step3 -> startActivity(Intent(this, IdProofActivity::class.java))
                     !currentSteps.step4 -> startActivity(Intent(this, KycActivity::class.java))
                     !currentSteps.step5 -> startActivity(Intent(this, BankDetailsActivity::class.java))
-                    else -> Toast.makeText(this, "All steps completed", Toast.LENGTH_SHORT).show()
+                    else -> {
+                        startActivity(Intent(this, ApplicationSubmittedActivity::class.java))
+                    }
                 }
             } else {
                 // If steps not loaded yet, initialize

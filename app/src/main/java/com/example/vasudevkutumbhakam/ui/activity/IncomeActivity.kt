@@ -101,7 +101,7 @@ class IncomeActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            saveIncomeDetails() // your existing function
+            saveIncomeDetails()
         }
 
     }

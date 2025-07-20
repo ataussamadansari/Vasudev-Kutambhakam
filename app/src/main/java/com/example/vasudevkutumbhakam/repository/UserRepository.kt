@@ -1,6 +1,7 @@
 package com.example.vasudevkutumbhakam.repository
 
 import android.net.Uri
+import com.example.vasudevkutumbhakam.model.BankDetails
 import com.example.vasudevkutumbhakam.model.IdProof
 import com.example.vasudevkutumbhakam.model.IncomeDetails
 import com.example.vasudevkutumbhakam.model.UserDetails
@@ -192,6 +193,53 @@ class UserRepository {
                 onError("Failed to fetch ID proof: ${e.message}")
             }
     }
+
+    // step 5
+    fun saveBankDetails(bankDetails: BankDetails, onResult: (Boolean, String?) -> Unit) {
+        val userId = auth.currentUser?.uid
+        if (userId == null) {
+            onResult(false, "User not logged in")
+            return
+        }
+
+        val data = mapOf(
+            "holderName" to bankDetails.holderName,
+            "bankName" to bankDetails.bankName,
+            "accountNumber" to bankDetails.accountNumber,
+            "ifscCode" to bankDetails.ifscCode
+        )
+
+        firestore.collection("vasudev_user_details")
+            .document(userId)
+            .update(data)
+            .addOnSuccessListener {
+                onResult(true, null)
+            }
+            .addOnFailureListener { e ->
+                onResult(false, e.message)
+            }
+    }
+
+
+    fun getBankDetails(onSuccess: (BankDetails) -> Unit, onError: (String) -> Unit) {
+        val uid = getCurrentUserId() ?: return
+        firestore.collection("vasudev_user_details")
+            .document(uid)
+            .get()
+            .addOnSuccessListener { doc ->
+                val bankDetails = BankDetails(
+                    holderName = doc.getString("holderName") ?: "",
+                    bankName = doc.getString("bankName") ?: "",
+                    accountNumber = doc.getString("accountNumber") ?: "",
+                    ifscCode = doc.getString("ifscCode") ?: ""
+                )
+                onSuccess(bankDetails)
+            }
+            .addOnFailureListener { e ->
+                onError("Failed to fetch ID proof: ${e.message}")
+            }
+    }
+
 
     fun markStep1Completed(onSuccess: () -> Unit, onError: (String) -> Unit) {
         val uid = getCurrentUserId() ?: return

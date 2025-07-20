@@ -74,6 +74,5 @@ class IdProofViewModel: ViewModel() {
                 resultMessage.value = error
             }
         )
-
     }
 }
