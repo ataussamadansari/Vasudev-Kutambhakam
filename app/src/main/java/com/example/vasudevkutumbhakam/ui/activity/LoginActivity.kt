@@ -33,7 +33,6 @@ class LoginActivity : AppCompatActivity() {
 
         binding.btnRegisterRedirect.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
-            finish()
         }
     }
 

@@ -18,12 +18,14 @@ import com.example.vasudevkutumbhakam.adapter.ReviewAdapter
 import com.example.vasudevkutumbhakam.databinding.FragmentHomeBinding
 import com.example.vasudevkutumbhakam.model.Process
 import com.example.vasudevkutumbhakam.model.Review
+import com.example.vasudevkutumbhakam.ui.activity.ApplicationSubmittedActivity
 import com.example.vasudevkutumbhakam.ui.activity.BankDetailsActivity
 import com.example.vasudevkutumbhakam.ui.activity.CheckEligibilityActivity
 import com.example.vasudevkutumbhakam.ui.activity.IdProofActivity
 import com.example.vasudevkutumbhakam.ui.activity.IncomeActivity
 import com.example.vasudevkutumbhakam.ui.activity.KycActivity
 import com.example.vasudevkutumbhakam.ui.activity.UserDetailsActivity
+import com.example.vasudevkutumbhakam.viewModel.AmountViewModel
 import com.example.vasudevkutumbhakam.viewModel.EligibilityViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -34,6 +36,8 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!  // Safe access
 
     private lateinit var viewModel: EligibilityViewModel
+
+    private lateinit var amountViewModel: AmountViewModel
 
     private lateinit var processKycTV: AppCompatTextView
     private lateinit var processCheckEligibilityTV: AppCompatTextView
@@ -70,6 +74,9 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(this)[EligibilityViewModel::class.java]
+        amountViewModel = ViewModelProvider(this)[AmountViewModel::class.java]
+
+        observeViewModel()
 
         steps()
 
@@ -94,6 +101,10 @@ class HomeFragment : Fragment() {
             startActivity(Intent(requireContext(), CheckEligibilityActivity::class.java))
         }
 
+        processProfileInfoTV.setOnClickListener {
+            startActivity(Intent(requireContext(), ApplicationSubmittedActivity::class.java))
+        }
+
         binding.reviewRv.apply {
             layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -104,6 +115,21 @@ class HomeFragment : Fragment() {
             startActivity(Intent(requireContext(), CheckEligibilityActivity::class.java))
         }
 
+        // Load saved amount
+        amountViewModel.fetchAmount()
+
+    }
+
+    private fun observeViewModel() {
+        amountViewModel.amountLiveData.observe(viewLifecycleOwner) {
+            binding.amountTv.setText("₹${it.amount}")
+        }
+
+        amountViewModel.resultMessage.observe(viewLifecycleOwner) {
+            it?.let { msg ->
+                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun steps() {
@@ -118,6 +144,10 @@ class HomeFragment : Fragment() {
             if (steps.step3) {
                 lineKyc.setBackgroundResource(R.drawable.active_line)
                 binding.processPresTV.text = "60%"
+
+                processKycTV.setOnClickListener {
+                    startActivity(Intent(requireContext(), KycActivity::class.java))
+                }
             }
             if (steps.step4) {
                 kycCircle.setBackgroundResource(R.drawable.indicator_circle)

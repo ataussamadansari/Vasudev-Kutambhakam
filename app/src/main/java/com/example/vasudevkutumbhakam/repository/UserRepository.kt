@@ -1,6 +1,7 @@
 package com.example.vasudevkutumbhakam.repository
 
 import android.net.Uri
+import com.example.vasudevkutumbhakam.model.Amount
 import com.example.vasudevkutumbhakam.model.BankDetails
 import com.example.vasudevkutumbhakam.model.IdProof
 import com.example.vasudevkutumbhakam.model.IncomeDetails
@@ -237,6 +238,41 @@ class UserRepository {
             }
             .addOnFailureListener { e ->
                 onError("Failed to fetch ID proof: ${e.message}")
+            }
+    }
+
+    // Amount
+    fun addBarrowAmount(amount: Amount, onResult: (Boolean, String?) -> Unit) {
+        val uid = getCurrentUserId() ?: return
+
+        val data = mapOf(
+            "amount" to amount.amount,
+        )
+
+        firestore.collection("vasudev_user_details")
+            .document(uid)
+            .update(data)
+            .addOnSuccessListener {
+                onResult(true, null)
+            }
+            .addOnFailureListener { e ->
+                onResult(false, e.message)
+            }
+    }
+
+    fun getAmount(onSuccess: (Amount) -> Unit, onError: (String) -> Unit) {
+        val uid = getCurrentUserId() ?: return
+        firestore.collection("vasudev_user_details")
+            .document(uid)
+            .get()
+            .addOnSuccessListener { doc ->
+                val amount = Amount(
+                    amount = doc.getString("amount") ?: "0,000"
+                )
+                onSuccess(amount)
+            }
+            .addOnFailureListener { e ->
+                onError("Failed to fetch amount: ${e.message}")
             }
     }
 
