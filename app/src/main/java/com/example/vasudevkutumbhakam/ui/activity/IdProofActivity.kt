@@ -51,6 +51,8 @@ class IdProofActivity : AppCompatActivity() {
             v.setPadding(16, systemBars.top, 16, systemBars.bottom)
             insets
         }
+
+        binding.backBtn.setOnClickListener { finish() }
         //init
         viewModel = ViewModelProvider(this)[IdProofViewModel::class.java]
 
@@ -159,7 +161,7 @@ class IdProofActivity : AppCompatActivity() {
         viewModel.inSuccess.observe(this) {
             if (it) {
                 Toast.makeText(this, "Step 3 completed", Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this, KycActivity::class.java)) // 👈 aapki next activity
+                startActivity(Intent(this, KycActivity::class.java))
                 finish()
             }
         }

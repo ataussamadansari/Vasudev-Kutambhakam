@@ -1,5 +1,6 @@
 package com.example.vasudevkutumbhakam.ui.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import com.example.vasudevkutumbhakam.R
 import com.example.vasudevkutumbhakam.adapter.OptionAdapter
 import com.example.vasudevkutumbhakam.databinding.FragmentProfileBinding
 import com.example.vasudevkutumbhakam.model.OptionItem
+import com.example.vasudevkutumbhakam.ui.activity.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -49,11 +51,28 @@ class ProfileFragment : Fragment() {
         // option menu recyclerview setup
         binding.optionBtnRv.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter = OptionAdapter(options)
+            adapter = OptionAdapter(options) { item ->
+                when (item.title) {
+                    "Log Out" -> performLogout()
+                }
+            }
         }
 
         loadUserData()
     }
+
+    private fun performLogout() {
+        FirebaseAuth.getInstance().signOut()
+
+        // Option 1: Redirect to LoginActivity (recommended)
+        val intent = Intent(requireContext(), LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+
+        // Option 2: Or just pop back (if you’re using Navigation Component)
+        // findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
+    }
+
 
     private fun loadUserData() {
         val currentUser = auth.currentUser

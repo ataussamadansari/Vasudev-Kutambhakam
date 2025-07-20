@@ -24,4 +24,9 @@
     <string name="id_proof_acccept_msg">I hereby declare that the ID proof submitted by me is valid, belongs to me, and I authorize Vasudev Kutumbhakam to use this document for identity verification and KYC purposes, as per applicable regulations.</string>
     <string name="income_details">Income Details</string>
     <string name="id_proof">ID Proof</string>
+    <string name="kyc">KYC</string>
+    <string name="instruction1"><b>START VIDEO CALL</b> to Connect to an Agent now and complete your KYC over the video call.</string>
+    <string name="instruction3">Keep your <b>ORIGINAL PAN CARD</b> ready for display to the agent</string>
+    <string name="instruction2"><b>ANSWER THE QUESTIONS</b> asked by our agent</string>
+    <string name="instruction4">You should be <b>SUITABLY DRESSED</b> and stand in a place with proper lighting</string>
 </resources>

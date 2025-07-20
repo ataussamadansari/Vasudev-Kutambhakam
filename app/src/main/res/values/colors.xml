@@ -11,4 +11,5 @@
     <color name="textColor2">#3A3A3A</color>
     <color name="textColor3">#A7A7A7</color>
     <color name="textColor4">#565656</color>
+    <color name="grayLight">#CECECE</color>
 </resources>
